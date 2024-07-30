@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #282c34;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .day-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+		.day-links > div {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        a {
+            text-decoration: none;
+            color: #61dafb;
+            font-size: 20px;
+            border: 1px solid #61dafb;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 5px 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        a:hover {
+            background-color: #61dafb;
+            color: #282c34;
+        }
+    </style>
+    <script>
+        // Olympics dates
+        const olympicsStartDate = new Date('2024-07-26');
+        const olympicsEndDate = new Date('2024-08-11');
+		
+        const today = new Date();
+		
+        // Calculate the number of days since the start date
+        const timeDifference = today - olympicsStartDate;
+        let dayNumber = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+        // Ensure the day number is within the range of the Olympics
+        if (dayNumber > 16) {
+            dayNumber = 16;
+        } else if (dayNumber < 1) {
+            dayNumber = 1;
+        }
+
+        // Generate the links for all days up to the current day
+        window.onload = function() {
+            const linksContainer = document.getElementById('dayLinks');
+            for (let i = dayNumber; i >= -1; i--) {
+				const dayDiv = document.createElement('div');
+				
+                const linkElementSingle = document.createElement('a');
+                linkElementSingle.href = `events/day${i}-single.html`;
+                linkElementSingle.textContent = `Day ${i} Single`;
+                dayDiv.appendChild(linkElementSingle);
+				
+				const linkElementMulti = document.createElement('a');
+                linkElementMulti.href = `events/day${i}-multi.html`;
+                linkElementMulti.textContent = `Day ${i} Multi`;
+                dayDiv.appendChild(linkElementMulti);
+				
+				linksContainer.appendChild(dayDiv);
+            }
+			
+			if (linksContainer.children.length === 0) {
+                linksContainer.textContent = 'No available links';
+            }
+        };
+    </script>
+</head>
+<body>
+    <h1>Quack</h1>
+    <div id="dayLinks" class="day-links">
+    </div>
+</body>
+</html>

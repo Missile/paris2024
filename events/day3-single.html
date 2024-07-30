@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Videos</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+        }
+        #controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: black;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+        #video-grid {
+            display: grid;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+		.video-container:hover .fullscreen-btn {
+            opacity: 1;
+        }
+        select {
+            color: white;
+            background-color: black;
+            border: 1px solid white;
+        }
+        body:hover #controls {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+	<div id="controls">
+        <select id="select1" onchange="updateIframe('iframe1', this.value)"></select>
+	</div>
+	
+    <div id="video-grid">
+        <iframe id="iframe1" allowfullscreen></iframe>
+    </div>
+	
+	
+	<script>
+        const videos = [
+            { title: "None", url: "" },
+            { title: "Shooting - Women's 10m Air Rifle", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450249" },
+            { title: "Archery - Men's Team 1/8 Eliminations", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450266" },
+            { title: "Women's Volleyball - Turkey vs Netherlands", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450138" },
+            { title: "Swimming - Heats Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450286" },
+            { title: "Rowing - Preliminaries - Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450140" },
+            { title: "Diving - Men's Synchonized 10m Platform", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450291" },
+            { title: "Beach Volleyball - Mixed Prelims - Session 1 Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450136" },
+            { title: "Women's Basketball - Nigeria vs Australia", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450295" },
+            { title: "Shooting - Men's 10m Air Rifle", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6458385" },
+            { title: "Judo - Women's 57kg Preliminaries", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450270" },
+            { title: "Boxing - Preliminaries - Session 1 Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450300" },
+            { title: "Surfing - Round 2 Heats", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452921" },
+            { title: "Judo - Men's 73kg Preliminaries", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6458920" },
+            { title: "Rowing - Preliminaries - Day 2", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6449992" },
+            { title: "Women's Volleyball - Brazil vs Kenya", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450349" },
+            { title: "Women's Water Polo - France vs Italy", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6458391" },
+            { title: "Women's Basketball - Germany vs Belgium", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450352" },
+            { title: "Skateboarding - Men's Street Preliminary", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6461999" },
+            { title: "Men's Mountain Bike Race", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450358" },
+            { title: "Women's Water Polo - USA vs Spain", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6458394" },
+            { title: "Fencing - Women's Sabre & Men's Foil Preliminaries", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450144" },
+            { title: "Rugby Sevens - Women's Pool - Session 1 Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450355" },
+            { title: "Boxing - Preliminaries - Session 2 Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450383" },
+            { title: "Tennis - Singles - Session 1 Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450339" },
+            { title: "Beach Volleyball - Mixed Prelims - Session 2 Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450369" },
+            { title: "Archery - Men's Team Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450363" },
+            { title: "Canoe Slalom - Men's C1 Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450379" },
+            { title: "Skateboarding - Men's Street Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447531" },
+            { title: "Women's Basketball - Canada vs France", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450390" },
+            { title: "Judo - Women's 57kg & Men's 73kg - Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450387" },
+            { title: "Women's Water Polo - China vs Netherlands", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450434" },
+            { title: "Artistic Gymnastics - Men's Team Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450405" },
+            { title: "Women's Water Polo - Hungary vs Canada", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450467" },
+            { title: "Badminton - Preliminaries - Session 3 Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450446" },
+            { title: "Boxing - Preliminaries - Session 3 Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450454" },
+            { title: "Women's Volleyball - France vs Serbia", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450481" },
+            { title: "Swimming - Finals Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450468" },
+            { title: "Table Tennis - Singles - Round of 32 Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450460" },
+            { title: "Women's Basketball - USA vs Japan", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450479" },
+            { title: "Rugby Sevens - Women's Pool - Session 2 Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450450" },
+            { title: "Beach Volleyball - Mixed Prelims - Session 3 Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450465" },
+            { title: "Shooting - Men's 10m Air Pistol Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450254" },
+            { title: "Fencing - Women's Sabre & Men's Foil - Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450436" },
+            { title: "Tennis - Singles - 2nd Round - Session 2 Day 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450441" },
+            { title: "Equestrian - Eventing Jumping Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450303" },
+            { title: "Surfing - Round 3 Heats", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450439" }
+        ];
+
+        function populateSelects() {
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                videos.forEach(video => {
+                    const option = document.createElement('option');
+                    option.value = video.url;
+                    option.textContent = video.title;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        function updateIframe(iframeId, url) {
+            document.getElementById(iframeId).src = url;
+            updateLayout();
+        }
+
+        function updateLayout() {
+            const iframes = document.querySelectorAll('#video-grid iframe');
+            const activeIframes = Array.from(iframes).filter(iframe => iframe.src);
+            const grid = document.getElementById('video-grid');
+            
+            switch (activeIframes.length) {
+                case 1:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+                    break;
+                case 2:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                case 3:
+                case 4:
+                    grid.style.gridTemplateColumns = '1fr 1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                default:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSelects();
+            updateIframe('iframe1', videos[1].url);
+            updateIframe('iframe2', videos[2].url);
+            updateIframe('iframe3', videos[3].url);
+            updateIframe('iframe4', videos[4].url);
+            updateLayout();
+        });
+
+    </script>
+</body>
+</html>

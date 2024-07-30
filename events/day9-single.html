@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Videos</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+        }
+        #controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: black;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+        #video-grid {
+            display: grid;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+		.video-container:hover .fullscreen-btn {
+            opacity: 1;
+        }
+        select {
+            color: white;
+            background-color: black;
+            border: 1px solid white;
+        }
+        body:hover #controls {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+	<div id="controls">
+        <select id="select1" onchange="updateIframe('iframe1', this.value)"></select>
+	</div>
+	
+    <div id="video-grid">
+        <iframe id="iframe1" allowfullscreen></iframe>
+    </div>
+	
+	
+	<script>
+        const videos = [
+            { title: "None", url: "" },
+            { title: "2:20am Badminton - Women's & Men's Semifinals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451756" },
+            { title: "2:50am Golf - Men's Round 4", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451766" },
+            { title: "2:50am Beach Volleyball - Mixed Round of 16 - Session 1 Day 9", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451759" },
+            { title: "2:50am Women's Volleyball - Italy vs Turkey", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451764" },
+            { title: "3:20am Archery - Men's Individual Round of 16", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451767" },
+            { title: "3:50am Dressage Individual Grand Prix Freestyle Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451776" },
+            { title: "3:50am Athletics - Track & Field Preliminaries - Day 9", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451772" },
+            { title: "4:05am Athletics - Women's Long Throws Qualifications", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451778" },
+            { title: "4:50am Boxing - Women's & Men's Semifinals Session 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451779" },
+            { title: "4:50am Women's Basketball - Japan vs Belgium", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451783" },
+            { title: "5:40am Fencing - Men's Team Foil Semifinals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451786" },
+            { title: "5:50am Sailing - Multihull, Dinghy, Kite - Day 9", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451792" },
+            { title: "5:50am Tennis - Men's & Women's Doubles Gold Medal Matches", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451795" },
+            { title: "6:50am Beach Volleyball - Mixed Round of 16 - Session 2 Day 9", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451799" },
+            { title: "6:50am Archery - Men's Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451797" },
+            { title: "7:20am Table Tennis - Men's Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451833" },
+            { title: "7:20am Women's Basketball - Canada vs Nigeria", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451803" },
+            { title: "7:50am Cycling - Women's Road Race Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451838" },
+            { title: "8:50am Artistic Gymnastics - Apparatus Finals Day 9", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451844" },
+            { title: "8:50am Badminton - Men's Doubles 3rd & 4th Placing Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451850" },
+            { title: "9:20am Boxing - Women's & Men's Semifinals - Session 2 Day 9", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451857" },
+            { title: "9:20am Canoe Slalom - Women's and Men's Kayak Cross Heats - Day 9", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451870" },
+            { title: "10:50am Women's Volleyball - China vs Serbia", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452029" },
+            { title: "10:50am Beach Volleyball - Mixed Round of 16 - Session 3 Day 9", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452022" },
+            { title: "11:05am Women's Basketball - Germany vs United States", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452037" },
+            { title: "11:20am Field Hockey - Men's Quarterfinals C & D", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452053" },
+            { title: "11:20am 3x3 Basketball - Women's Pool Phase", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452061" },
+            { title: "12:20pm Athletics - Track & Field Finals Day 9", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452071" },
+            { title: "12:20pm Swimming - Finals Day 9", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452079" },
+            { title: "12:20pm Women's Water Polo - Canada vs Netherlands", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452075" },
+            { title: "1:00pm Fencing - Men's Foil Team Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452084" },
+            { title: "1:50pm Men's Handball - Denmark vs Norway & Spain vs Croatia", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452088" },
+            { title: "2:50pm Beach Volleyball - Mixed Round of 16 Session 4 - Day 9", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452100" },
+            { title: "2:50pm Women's Volleyball - Brazil vs Poland", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452105" },
+            { title: "2:50pm Women's Basketball - Australia vs France", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452097" },
+            { title: "3:20pm 3x3 Basketball - Men's Play In", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452112" }
+        ];
+
+        function populateSelects() {
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                videos.forEach(video => {
+                    const option = document.createElement('option');
+                    option.value = video.url;
+                    option.textContent = video.title;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        function updateIframe(iframeId, url) {
+            document.getElementById(iframeId).src = url;
+            updateLayout();
+        }
+
+        function updateLayout() {
+            const iframes = document.querySelectorAll('#video-grid iframe');
+            const activeIframes = Array.from(iframes).filter(iframe => iframe.src);
+            const grid = document.getElementById('video-grid');
+            
+            switch (activeIframes.length) {
+                case 1:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+                    break;
+                case 2:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                case 3:
+                case 4:
+                    grid.style.gridTemplateColumns = '1fr 1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                default:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSelects();
+            updateIframe('iframe1', videos[1].url);
+            updateIframe('iframe2', videos[2].url);
+            updateIframe('iframe3', videos[3].url);
+            updateIframe('iframe4', videos[4].url);
+            updateLayout();
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Videos</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+        }
+        #controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: black;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+        #video-grid {
+            display: grid;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+		.video-container:hover .fullscreen-btn {
+            opacity: 1;
+        }
+        select {
+            color: white;
+            background-color: black;
+            border: 1px solid white;
+        }
+        body:hover #controls {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+	<div id="controls">
+        <select id="select1" onchange="updateIframe('iframe1', this.value)"></select>
+	</div>
+	
+    <div id="video-grid">
+        <iframe id="iframe1" allowfullscreen></iframe>
+    </div>
+	
+	
+	<script>
+        const videos = [
+            { title: "None", url: "" },
+            { title: "Men's Soccer - Argentina vs Morocco", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6427282" },
+            { title: "Men's Soccer - Uzbekistan vs Spain", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6427274" },
+            { title: "Rugby Sevens - Men's Pool Phase - Session 1 Day -2", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6427286" },
+            { title: "Men's Soccer - Guinea vs New Zealand", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6427301" },
+            { title: "Men's Soccer - Egypt vs Dominican Republic", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6427291" },
+            { title: "Men's Soccer - Japan vs Paraguay", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6427307" },
+            { title: "Rugby Sevens - Men's Pool Phase - Session 2 Day -2", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6427318" },
+            { title: "Men's Soccer - Iraq vs Ukraine", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6427312" },
+            { title: "Men's Soccer - Mali vs Israel", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6427324" },
+            { title: "Men's Soccer - France vs USA", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6427329" },
+            { title: "Women's Soccer - Spain vs Japan", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6441563" },
+            { title: "Women's Soccer - Canada vs New Zealand", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6441559" },
+            { title: "Women's Handball - Slovenia vs Denmark & Netherlands vs Angola", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6441555" },
+            { title: "Women's Soccer - Nigeria vs Brazil", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6441572" },
+            { title: "Women's Soccer - Germany vs Australia", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6441573" },
+            { title: "Women's Soccer - France vs Colombia", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6441575" },
+            { title: "Women's Soccer - USA vs Zambia", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6441576" },
+            { title: "Rugby Sevens - Men's Quarterfinals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6441574" }
+        ];
+
+        function populateSelects() {
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                videos.forEach(video => {
+                    const option = document.createElement('option');
+                    option.value = video.url;
+                    option.textContent = video.title;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        function updateIframe(iframeId, url) {
+            document.getElementById(iframeId).src = url;
+            updateLayout();
+        }
+
+        function updateLayout() {
+            const iframes = document.querySelectorAll('#video-grid iframe');
+            const activeIframes = Array.from(iframes).filter(iframe => iframe.src);
+            const grid = document.getElementById('video-grid');
+            
+            switch (activeIframes.length) {
+                case 1:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+                    break;
+                case 2:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                case 3:
+                case 4:
+                    grid.style.gridTemplateColumns = '1fr 1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                default:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSelects();
+            updateIframe('iframe1', videos[1].url);
+            updateIframe('iframe2', videos[2].url);
+            updateIframe('iframe3', videos[3].url);
+            updateIframe('iframe4', videos[4].url);
+            updateLayout();
+        });
+
+    </script>
+</body>
+</html>

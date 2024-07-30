@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Videos</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+        }
+        #controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: black;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+        #video-grid {
+            display: grid;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+		.video-container:hover .fullscreen-btn {
+            opacity: 1;
+        }
+        select {
+            color: white;
+            background-color: black;
+            border: 1px solid white;
+        }
+        body:hover #controls {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <select id="select1" onchange="updateIframe('iframe1', this.value)"></select>
+        <select id="select2" onchange="updateIframe('iframe2', this.value)"></select>
+        <select id="select3" onchange="updateIframe('iframe3', this.value)"></select>
+        <select id="select4" onchange="updateIframe('iframe4', this.value)"></select>
+    </div>
+    <div id="video-grid">
+        <div class="video-container">
+            <iframe id="iframe1" allowfullscreen></iframe>
+            <button class="fullscreen-btn" onclick="makeFullscreen('iframe1')">Fullscreen</button>
+        </div>
+        <div class="video-container">
+            <iframe id="iframe2" allowfullscreen></iframe>
+            <button class="fullscreen-btn" onclick="makeFullscreen('iframe2')">Fullscreen</button>
+        </div>
+        <div class="video-container">
+            <iframe id="iframe3" allowfullscreen></iframe>
+            <button class="fullscreen-btn" onclick="makeFullscreen('iframe3')">Fullscreen</button>
+        </div>
+        <div class="video-container">
+            <iframe id="iframe4" allowfullscreen></iframe>
+            <button class="fullscreen-btn" onclick="makeFullscreen('iframe4')">Fullscreen</button>
+        </div>
+    </div>
+
+    <script>
+        const videos = [
+            { title: "None", url: "" },
+            { title: "1:50am Triathlon - Men's Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450296" },
+            { title: "2:20am Badminton - Group Play - Session 1 Day 4", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450306" },
+            { title: "2:50am Men's Volleyball - Italy vs Egypt", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450312" },
+            { title: "2:50am Beach Volleyball - Mixed Prelims - Session 1 Day 4 ", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450310" },
+            { title: "3:20am Rowing - Preliminaries - Day 4", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450324" },
+            { title: "3:20am Shooting - Mixed Team Air Pistol Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450317" },
+            { title: "3:50am Judo - Women's 63kg Elimination Round", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6463066" },
+            { title: "3:50am Table Tennis - Women's & Men's Singles - Round of 32 - Day 4", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450328" },
+            { title: "4:20am Men's Water Polo - Australia vs Serbia", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6458419" },
+            { title: "4:50am Dressage Grand Prix Qualifier - Day 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450364" },
+            { title: "4:50am Swimming - Heats Day 4", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450345" },
+            { title: "4:50am Men's Basketball - Spain vs Greece", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450353" },
+            { title: "5:50am Tennis - Singles - Session 1 Day 4", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450397" },
+            { title: "5:50am Archery - Individual Eliminations - Session 1 Day 4 ", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450415" },
+            { title: "5:50am Sailing - Windsurfing and Skiff Day 4", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450373" },
+            { title: "5:50am Men's Water Polo - Croatia vs Italy", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6458939" },
+            { title: "6:50am Men's Volleyball - USA vs Germany", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450427" },
+            { title: "7:15am Cycling - BMX Park Qualifications", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450453" },
+            { title: "7:20am Fencing - Women's Epee Team - Preliminary", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6458956" },
+            { title: "7:20am Men's Basketball - Canada vs Australia", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450458" },
+            { title: "7:20am Table Tennis - Mixed Doubles Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6458944" },
+            { title: "8:20am Rugby Sevens - Women's Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450484" },
+            { title: "8:50am Canoe Slalom - Women's Canoe & Men's Kayak Heats", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450614" },
+            { title: "8:50am Men's Soccer - Dominican Republic vs Uzbekistan", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450625" },
+            { title: "8:50am Beach Volleyball - Mixed Prelims - Session 2 Day 4", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450620" },
+            { title: "9:20am Shooting - Men's Trap Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450636" },
+            { title: "9:20am Boxing - Preliminaries - Session 2", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450631" },
+            { title: "9:50am Judo - Men's 81kg & Women's 63kg - Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450640" },
+            { title: "10:50am Men's Soccer - Ukraine vs. Argentina", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450647" },
+            { title: "10:50am Men's Soccer - Morocco vs Iraq", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6458960" },
+            { title: "11:05am Men's Basketball - Japan vs France", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450654" },
+            { title: "11:20am 3X3 Basketball - Pool Phase - Session 1 Day 4", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450659" },
+            { title: "12:05pm Artistic Gymnastics - Women's Team Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450677" },
+            { title: "12:50pm Tennis - Singles - Session 2", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450698" },
+            { title: "12:50pm Men's Soccer - USA vs Guinea", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450692" },
+            { title: "12:50pm Surfing - Men's & Women's Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450687" },
+            { title: "1:20pm Fencing - Women's Epee Team Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450701" },
+            { title: "1:50pm Boxing - Preliminaries - Session 3 Day 4", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450708" },
+            { title: "1:50pm Beach Volleyball - Mixed Prelims - Session 3 Day 4", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450706" },
+            { title: "2:20pm Swimming - Finals Day 4", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450710" },
+            { title: "2:50pm Men's Soccer - Israel vs Japan", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450726" },
+            { title: "2:50pm Men's Volleyball - France vs Canada", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450743" },
+            { title: "2:50pm Men's Soccer - Paraguay vs. Mali", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450736" },
+            { title: "2:50pm 3x3 Basketball - Pool Phase - Session 2 Day 4", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450717" },
+            { title: "2:50pm Men's Basketball - Brazil vs. Germany", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6450713" }
+        ];
+
+        function populateSelects() {
+            const selects = document.querySelectorAll('select');
+			
+            selects.forEach(select => {
+                videos.forEach(video => {
+                    const option = document.createElement('option');
+                    option.value = video.url;
+                    option.textContent = video.title;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        function updateIframe(iframeId, url) {
+            document.getElementById(iframeId).src = url;
+            updateLayout();
+        }
+
+        function updateLayout() {
+            const iframes = document.querySelectorAll('#video-grid iframe');
+            const activeIframes = Array.from(iframes).filter(iframe => iframe.src);
+            const grid = document.getElementById('video-grid');
+            
+            switch (activeIframes.length) {
+                case 1:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+                    break;
+                case 2:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                case 3:
+                case 4:
+                    grid.style.gridTemplateColumns = '1fr 1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                default:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+            }
+        }
+
+        function makeFullscreen(iframeId) {
+            const iframe = document.getElementById(iframeId);
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.mozRequestFullScreen) { /* Firefox */
+                iframe.mozRequestFullScreen();
+            } else if (iframe.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.msRequestFullscreen) { /* IE/Edge */
+                iframe.msRequestFullscreen();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSelects();
+            updateIframe('iframe1', videos[1].url);
+            updateIframe('iframe2', videos[2].url);
+            updateIframe('iframe3', videos[3].url);
+            updateIframe('iframe4', videos[4].url);
+            updateLayout();
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Videos</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+        }
+        #controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: black;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+        #video-grid {
+            display: grid;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+		.video-container:hover .fullscreen-btn {
+            opacity: 1;
+        }
+        select {
+            color: white;
+            background-color: black;
+            border: 1px solid white;
+        }
+        body:hover #controls {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <select id="select1" onchange="updateIframe('iframe1', this.value)"></select>
+        <select id="select2" onchange="updateIframe('iframe2', this.value)"></select>
+        <select id="select3" onchange="updateIframe('iframe3', this.value)"></select>
+        <select id="select4" onchange="updateIframe('iframe4', this.value)"></select>
+    </div>
+    <div id="video-grid">
+        <div class="video-container">
+            <iframe id="iframe1" allowfullscreen></iframe>
+            <button class="fullscreen-btn" onclick="makeFullscreen('iframe1')">Fullscreen</button>
+        </div>
+        <div class="video-container">
+            <iframe id="iframe2" allowfullscreen></iframe>
+            <button class="fullscreen-btn" onclick="makeFullscreen('iframe2')">Fullscreen</button>
+        </div>
+        <div class="video-container">
+            <iframe id="iframe3" allowfullscreen></iframe>
+            <button class="fullscreen-btn" onclick="makeFullscreen('iframe3')">Fullscreen</button>
+        </div>
+        <div class="video-container">
+            <iframe id="iframe4" allowfullscreen></iframe>
+            <button class="fullscreen-btn" onclick="makeFullscreen('iframe4')">Fullscreen</button>
+        </div>
+    </div>
+
+    <script>
+        const videos = [
+            { title: "None", url: "" },
+            { title: "Women's Handball - Spain vs Brazil & Germany vs Republic of Korea", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6441558" },
+            { title: "Men's Volleyball - Japan vs Germany", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447451" },
+            { title: "Badminton - Group Play - Day 1 Session 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6458103" },
+            { title: "Shooting - 10m Air Rifle Team Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447471" },
+            { title: "Diving - Women's Synchronized 3m Springboard", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447475" },
+            { title: "Rowing - Preliminaries - Day 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447449" },
+            { title: "Swimming - Heats Day 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447474" },
+            { title: "Men's Basketball - Australia vs Spain", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447503" },
+            { title: "Artistic Gymnastics - Men's Qualification 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447477" },
+            { title: "Men's Basketball - Germany vs Japan", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447508" },
+            { title: "Beach Volleyball - Men's Prelims - Session 1 Day 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447509" },
+            { title: "Fencing - Women's Epee and Men's Sabre Prelims", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447453" },
+            { title: "Men's Soccer - Argentina vs Iraq", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447514" },
+            { title: "Tennis - Singles & Doubles - Court 14 - Day 1 Session 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6460481" },
+            { title: "Artistic Gymnastics - Men's Qualification 2", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447519" },
+            { title: "Boxing - Preliminaries - Session 1 Day 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447525" },
+            { title: "Women's Water Polo - Netherlands vs Hungary", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6457618" },
+            { title: "Men's Soccer - Dominican Republic vs Spain", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6457623" },
+            { title: "Eventing Dressage - Team & Individual", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447452" },
+            { title: "Women's Water Polo - Greece vs USA", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6457628" },
+            { title: "Road Cycling - Individual Time Trials", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447511" },
+            { title: "Men's Soccer - Uzbekistan vs Egypt", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447538" },
+            { title: "Men's Soccer - Ukraine vs Morocco", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6457643" },
+            { title: "Men's Basketball - France vs Brazil", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447541" },
+            { title: "Judo - Women's 48kg & Men's 60kg - Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447529" },
+            { title: "Tennis - Court 1 - Day 1 Session 1 (Joined in Progress)", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447505" },
+            { title: "Canoe Slalom - Men's Canoe & Women's Kayak - Day 1 (Joined in Progress)", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6461113" },
+            { title: "Men's Soccer - New Zealand vs USA", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447555" },
+            { title: "Rugby Sevens - Men's Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447557" },
+            { title: "Men's Soccer - Paraguay vs Israel", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6457655" },
+            { title: "Artistic Gymnastics - Men's Qualification 3", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447562" },
+            { title: "Men's Volleyball - USA vs Argentina", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447565" },
+            { title: "Boxing - Preliminaries - Session 2 Day 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447561" },
+            { title: "Tennis - Singles - Round 1 Day 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447556" },
+            { title: "Swimming - Finals Day 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447563" },
+            { title: "Fencing - Women's Epee & Men's Sabre Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447554" },
+            { title: "Men's Soccer - France vs Guinea", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447573" },
+            { title: "Men's Basketball - Greece vs Canada", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447572" },
+            { title: "Men's Soccer - Japan vs Mali", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6449539" },
+            { title: "Table Tennis - Prelims - Session 2 Day 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447560" },
+            { title: "Beach Volleyball - Mixed Prelims - Session 3 Day 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6447574" }
+        ];
+
+        function populateSelects() {
+            const selects = document.querySelectorAll('select');
+			
+            selects.forEach(select => {
+                videos.forEach(video => {
+                    const option = document.createElement('option');
+                    option.value = video.url;
+                    option.textContent = video.title;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        function updateIframe(iframeId, url) {
+            document.getElementById(iframeId).src = url;
+            updateLayout();
+        }
+
+        function updateLayout() {
+            const iframes = document.querySelectorAll('#video-grid iframe');
+            const activeIframes = Array.from(iframes).filter(iframe => iframe.src);
+            const grid = document.getElementById('video-grid');
+            
+            switch (activeIframes.length) {
+                case 1:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+                    break;
+                case 2:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                case 3:
+                case 4:
+                    grid.style.gridTemplateColumns = '1fr 1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                default:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+            }
+        }
+
+        function makeFullscreen(iframeId) {
+            const iframe = document.getElementById(iframeId);
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.mozRequestFullScreen) { /* Firefox */
+                iframe.mozRequestFullScreen();
+            } else if (iframe.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.msRequestFullscreen) { /* IE/Edge */
+                iframe.msRequestFullscreen();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSelects();
+            updateIframe('iframe1', videos[1].url);
+            updateIframe('iframe2', videos[2].url);
+            updateIframe('iframe3', videos[3].url);
+            updateIframe('iframe4', videos[4].url);
+            updateLayout();
+        });
+
+    </script>
+</body>
+</html>

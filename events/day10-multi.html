@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Videos</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+        }
+        #controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: black;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+        #video-grid {
+            display: grid;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+		.video-container:hover .fullscreen-btn {
+            opacity: 1;
+        }
+        select {
+            color: white;
+            background-color: black;
+            border: 1px solid white;
+        }
+        body:hover #controls {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <select id="select1" onchange="updateIframe('iframe1', this.value)"></select>
+        <select id="select2" onchange="updateIframe('iframe2', this.value)"></select>
+        <select id="select3" onchange="updateIframe('iframe3', this.value)"></select>
+        <select id="select4" onchange="updateIframe('iframe4', this.value)"></select>
+    </div>
+    <div id="video-grid">
+        <div class="video-container">
+            <iframe id="iframe1" allowfullscreen></iframe>
+            <button class="fullscreen-btn" onclick="makeFullscreen('iframe1')">Fullscreen</button>
+        </div>
+        <div class="video-container">
+            <iframe id="iframe2" allowfullscreen></iframe>
+            <button class="fullscreen-btn" onclick="makeFullscreen('iframe2')">Fullscreen</button>
+        </div>
+        <div class="video-container">
+            <iframe id="iframe3" allowfullscreen></iframe>
+            <button class="fullscreen-btn" onclick="makeFullscreen('iframe3')">Fullscreen</button>
+        </div>
+        <div class="video-container">
+            <iframe id="iframe4" allowfullscreen></iframe>
+            <button class="fullscreen-btn" onclick="makeFullscreen('iframe4')">Fullscreen</button>
+        </div>
+    </div>
+
+    <script>
+        const videos = [
+            { title: "None", url: "" },
+            { title: "1:50am Triathlon - Mixed Relay", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451849" },
+            { title: "2:50am Beach Volleyball - Mixed Round of 16 - Session 1 Day 10 ", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451877" },
+            { title: "3:20am Shooting - Men's Rapid Fire Pistol Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6451883" },
+            { title: "3:35am Badminton - Women's Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452007" },
+            { title: "3:50am Table Tennis - Men's & Women's Team Round of 16 - Session 1 Day 10", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452019" },
+            { title: "3:50am Women's Field Hockey - Quarterfinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452016" },
+            { title: "3:50am Diving - Women's 10m Platform Preliminaries", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452011" },
+            { title: "3:50am Athletics - Track & Field Preliminaries - Day 10", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452008" },
+            { title: "3:50am Sport Climbing - Preliminary Round - Day 10", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452024" },
+            { title: "5:50am Men's Water Polo - Hungary vs Serbia", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452034" },
+            { title: "5:50am Sailing - Kite, Multihull, Dinghy - Day 10", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452030" },
+            { title: "5:50am Artistic Gymnastics - Apparatus Finals Day 10", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452026" },
+            { title: "6:20am Women's Field Hockey - Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452041" },
+            { title: "6:50am Beach Volleyball - Women's Round of 8 - Session 2 Day 10", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452042" },
+            { title: "6:50am Men's Volleyball - Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452043" },
+            { title: "7:20am Men's Water Polo - Australia vs Japan", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452045" },
+            { title: "7:50am Equestrian - Jumping Individual Qualifier", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452050" },
+            { title: "8:20am Badminton - Men's Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452054" },
+            { title: "8:50am Shooting - Skeet Mixed Team Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452128" },
+            { title: "8:50am Men's Water Polo - Greece vs Italy", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452062" },
+            { title: "8:50am Table Tennis - Women's & Men's Team Round of 16 - Session 2 Day 10", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452058" },
+            { title: "8:50am Wrestling - Preliminary Round - Session 1 Day 10", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452127" },
+            { title: "8:50am Diving - Women's 10m Platform Semifinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452067" },
+            { title: "9:20am Women's & Men's Kayak Cross Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452130" },
+            { title: "10:50am Beach Volleyball - Women's Round of 8 - Session 3 Day 10", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452135" },
+            { title: "10:50am Men's Volleyball - Quarterfinal C", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452137" },
+            { title: "10:50am Cycling Track - Team Sprint, Pursuit - Day 10", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452134" },
+            { title: "11:20am Women's Field Hockey - Quarterfinal C", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452138" },
+            { title: "11:20am 3x3 Basketball - Women's & Men's Semifinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452141" },
+            { title: "11:50am Men's Soccer - Semifinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452143" },
+            { title: "12:20pm Athletics - Track & Field Finals Day 10", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452150" },
+            { title: "12:20pm Men's Water Polo - Croatia vs USA", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452151" },
+            { title: "1:20pm Artistic Swimming - Team Technical Routine", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452155" },
+            { title: "1:50pm Women's Field Hockey - Quarterfinal D", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452158" },
+            { title: "1:50pm Table Tennis - Men's & Women's Team Round of 16 - Session 3 Day 10", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452161" },
+            { title: "2:50pm Wrestling - Men's Greco Roman, Women's Freestyle Seminfinals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452175" },
+            { title: "2:50pm Beach Volleyball - Mixed Round of 16 - Session 4 Day 10", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452170" },
+            { title: "2:50pm Men's Volleyball - Quarterfinal D", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452180" },
+            { title: "2:50pm 3x3 Basketball - Women's & Men's Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452163" },
+            { title: "2:50pm Men's Soccer - Semifinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452182" }
+        ];
+
+        function populateSelects() {
+            const selects = document.querySelectorAll('select');
+			
+            selects.forEach(select => {
+                videos.forEach(video => {
+                    const option = document.createElement('option');
+                    option.value = video.url;
+                    option.textContent = video.title;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        function updateIframe(iframeId, url) {
+            document.getElementById(iframeId).src = url;
+            updateLayout();
+        }
+
+        function updateLayout() {
+            const iframes = document.querySelectorAll('#video-grid iframe');
+            const activeIframes = Array.from(iframes).filter(iframe => iframe.src);
+            const grid = document.getElementById('video-grid');
+            
+            switch (activeIframes.length) {
+                case 1:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+                    break;
+                case 2:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                case 3:
+                case 4:
+                    grid.style.gridTemplateColumns = '1fr 1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                default:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+            }
+        }
+
+        function makeFullscreen(iframeId) {
+            const iframe = document.getElementById(iframeId);
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.mozRequestFullScreen) { /* Firefox */
+                iframe.mozRequestFullScreen();
+            } else if (iframe.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.msRequestFullscreen) { /* IE/Edge */
+                iframe.msRequestFullscreen();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSelects();
+            updateIframe('iframe1', videos[1].url);
+            updateIframe('iframe2', videos[2].url);
+            updateIframe('iframe3', videos[3].url);
+            updateIframe('iframe4', videos[4].url);
+            updateLayout();
+        });
+
+    </script>
+</body>
+</html>
