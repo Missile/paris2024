@@ -19,6 +19,9 @@
         h1 {
             margin-bottom: 20px;
         }
+        .duck {
+            font-size: 2em;
+        }
         .day-links {
             display: flex;
             flex-direction: column;
@@ -63,8 +66,24 @@
 
         // Generate the links for all days up to the current day
         window.onload = function() {
+			
+			const linksContainerToday = document.getElementById('dayLink');
+			const todayDiv = document.createElement('div');
+			
+			const linkElementS = document.createElement('a');
+			linkElementS.href = `events/day${dayNumber}-single.html`;
+			linkElementS.textContent = `Day ${dayNumber} Single`;
+			todayDiv.appendChild(linkElementS);
+			
+			const linkElementM = document.createElement('a');
+			linkElementM.href = `events/day${dayNumber}-multi.html`;
+			linkElementM.textContent = `Day ${dayNumber} Multi`;
+			todayDiv.appendChild(linkElementM);
+			
+			linksContainerToday.appendChild(todayDiv);			
+		
             const linksContainer = document.getElementById('dayLinks');
-            for (let i = dayNumber; i >= -1; i--) {
+            for (let i = dayNumber-1; i >= -1; i--) {
 				const dayDiv = document.createElement('div');
 				
                 const linkElementSingle = document.createElement('a');
@@ -87,8 +106,10 @@
     </script>
 </head>
 <body>
-    <h1>Quack</h1>
-    <div id="dayLinks" class="day-links">
-    </div>
+    <h1><span class="duck">🦆</span></h1>
+	<div id="dayLink" class="day-links"></div>
+	
+	<h2>Archive</h2>
+    <div id="dayLinks" class="day-links"></div>
 </body>
 </html>
