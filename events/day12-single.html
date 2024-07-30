@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Videos</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+			overflow: hidden;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+        }
+        #controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: black;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+        #video-grid {
+            display: grid;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+		.video-container:hover .fullscreen-btn {
+            opacity: 1;
+        }
+        select {
+            color: white;
+            background-color: black;
+            border: 1px solid white;
+        }
+        body:hover #controls {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+	<div id="controls">
+        <select id="select1" onchange="updateIframe('iframe1', this.value)"></select>
+	</div>
+	
+    <div id="video-grid">
+        <iframe id="iframe1" allowfullscreen></iframe>
+    </div>
+	
+	
+	<script>
+        const videos = [
+            { title: "None", url: "" },
+            { title: "1:20am Athletics - Race Walk Mixed Relay", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452529" },
+            { title: "2:50am Golf - Women's Round 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452532" },
+            { title: "2:50am Taekwondo - Women's 49kg & Men's 58kg Round of 16", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452535" },
+            { title: "3:20am Canoe Sprint - Men's & Women's Canoe & Kayak Quarterfinals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452539" },
+            { title: "3:50am Table Tennis - Men's & Women's Team Quarterfinals C", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452556" },
+            { title: "3:50am Diving - Men's 3m Springboard Semifinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452548" },
+            { title: "3:50am Athletics - Track & Field Preliminaries - Day 12", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452544" },
+            { title: "3:50am Sport Climbing - Men's Lead Semifinal & Women's Speed Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452552" },
+            { title: "4:50am Basketball - Women's Quarterfinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452559" },
+            { title: "4:50am Wrestling - Men's & Women's Preliminaries - Day 12", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452568" },
+            { title: "5:50am Sailing - Mixed Dinghy & Mixed Multihull Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452570" },
+            { title: "6:20am Skateboarding - Men's Park Preliminaries", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452575" },
+            { title: "6:35am Cycling Track - Women's Team Sprint Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452578" },
+            { title: "7:20am Men's Handball - Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452579" },
+            { title: "7:50am Men's Water Polo - Quarterfinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452581" },
+            { title: "8:20am Basketball - Women's Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452584" },
+            { title: "8:20am Taekwondo - Women's 49kg & Men's 58kg - Semifinals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452590" },
+            { title: "8:50am Table Tennis - Men's & Women's Team Quarterfinals D", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452595" },
+            { title: "8:50am Weightlifting - Men's 61KG", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452601" },
+            { title: "8:50am Diving - Women's 3m Springboard Preliminary", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452592" },
+            { title: "9:20am Men's Water Polo - Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452622" },
+            { title: "9:50am Men's Volleyball - Semifinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452623" },
+            { title: "10:50am Beach Volleyball - Mixed Quarterfinal C", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452625" },
+            { title: "11:20am Men's Handball - Quarterfinal C", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452637" },
+            { title: "11:20am Skateboarding - Men's Park Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452638" },
+            { title: "11:20am Cycling Track - Day 12 Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452629" },
+            { title: "11:50am Women's Basketball - Quarterfinal C", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452641" },
+            { title: "12:05pm Wrestling - Women's & Men's Finals - Day 12", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452646" },
+            { title: "12:20pm Athletics - Track & Field Finals - Day 12", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452648" },
+            { title: "12:50pm Men's Water Polo - Quarterfinal C", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452651" },
+            { title: "1:20pm Taekwondo - Women's 49kg & Men's 58kg Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452659" },
+            { title: "1:20pm Weightlifting - Women's 49kg Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452658" },
+            { title: "1:20pm Artistic Swimming - Team Acrobatic Routine", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452656" },
+            { title: "1:50pm Men's Volleyball - Semifinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452661" },
+            { title: "1:50pm Table Tennis - Men's Team Semifinals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452662" },
+            { title: "2:20pm Men's Water Polo - Quarterfinal D", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452664" },
+            { title: "2:50pm Beach Volleyball - Mixed Quarterfinal D", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452665" },
+            { title: "3:20pm Women's Basketball - Quarterfinal D", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452677" },
+            { title: "3:20pm Men's Handball - Quarterfinal D", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452675" },
+            { title: "3:20pm Boxing - Women's & Men's Finals - Day 12", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452670" }
+        ];
+
+        function populateSelects() {
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                videos.forEach(video => {
+                    const option = document.createElement('option');
+                    option.value = video.url;
+                    option.textContent = video.title;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        function updateIframe(iframeId, url) {
+            document.getElementById(iframeId).src = url;
+            updateLayout();
+        }
+
+        function updateLayout() {
+            const iframes = document.querySelectorAll('#video-grid iframe');
+            const activeIframes = Array.from(iframes).filter(iframe => iframe.src);
+            const grid = document.getElementById('video-grid');
+            
+            switch (activeIframes.length) {
+                case 1:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+                    break;
+                case 2:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                case 3:
+                case 4:
+                    grid.style.gridTemplateColumns = '1fr 1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                default:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSelects();
+            updateIframe('iframe1', videos[1].url);
+            updateIframe('iframe2', videos[2].url);
+            updateIframe('iframe3', videos[3].url);
+            updateIframe('iframe4', videos[4].url);
+            updateLayout();
+        });
+
+    </script>
+</body>
+</html>
