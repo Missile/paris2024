@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Videos</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+			overflow: hidden;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+        }
+        #controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: black;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+        #video-grid {
+            display: grid;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            gap: 0;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+		.video-container:hover .fullscreen-btn {
+            opacity: 1;
+        }
+        select {
+            color: white;
+            background-color: black;
+            border: 1px solid white;
+        }
+        body:hover #controls {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+	<div id="controls">
+        <select id="select1" onchange="updateIframe('iframe1', this.value)"></select>
+	</div>
+	
+    <div id="video-grid">
+        <iframe id="iframe1" allowfullscreen></iframe>
+    </div>
+	
+	
+	<script>
+        const videos = [
+            { title: "None", url: "" },
+            { title: "1:50am Athletics - Women's Marathon", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453227" },
+            { title: "2:50am Men's Water Polo - Classification Match", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453241" },
+            { title: "2:50am Men's Handball - Bronze Medal Match", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453238" },
+            { title: "4:20am Men's Water Polo - Bronze Medal Match", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453247" },
+            { title: "4:50am Wrestling - Men's & Women's Finals - Day 16", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453255" },
+            { title: "4:50am Modern Pentathlon - Women's Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453265" },
+            { title: "4:50am Cycling Track - Finals Day 16", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453254" },
+            { title: "5:20am Women's Basketball - Bronze Medal Match", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453274" },
+            { title: "5:20am Weightlifting - Women's +81kg Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453291" },
+            { title: "6:50am Women's Volleyball - Gold Medal Match", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453295" },
+            { title: "7:20am Men's Handball - Gold Medal Match", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453299" },
+            { title: "7:50am Men's Water Polo - Gold Medal Match", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453301" },
+            { title: "9:20am Women's Basketball - Gold Medal Match", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453306" },
+            { title: "1:50pm Games of the XXXIII Olympiad Paris 2024 - Closing Ceremony", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453179" },
+            { title: "1:50pm The Olympic Closing Ceremony with American Sign Language", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6453186" }
+        ];
+
+        function populateSelects() {
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                videos.forEach(video => {
+                    const option = document.createElement('option');
+                    option.value = video.url;
+                    option.textContent = video.title;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        function updateIframe(iframeId, url) {
+            document.getElementById(iframeId).src = url;
+            updateLayout();
+        }
+
+        function updateLayout() {
+            const iframes = document.querySelectorAll('#video-grid iframe');
+            const activeIframes = Array.from(iframes).filter(iframe => iframe.src);
+            const grid = document.getElementById('video-grid');
+            
+            switch (activeIframes.length) {
+                case 1:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+                    break;
+                case 2:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                case 3:
+                case 4:
+                    grid.style.gridTemplateColumns = '1fr 1fr';
+                    grid.style.gridTemplateRows = '1fr 1fr';
+                    break;
+                default:
+                    grid.style.gridTemplateColumns = '1fr';
+                    grid.style.gridTemplateRows = '1fr';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSelects();
+            updateIframe('iframe1', videos[1].url);
+            updateIframe('iframe2', videos[2].url);
+            updateIframe('iframe3', videos[3].url);
+            updateIframe('iframe4', videos[4].url);
+            updateLayout();
+        });
+
+    </script>
+</body>
+</html>
