@@ -31,6 +31,7 @@
             width: 100%;
             margin: 0;
             padding: 0;
+            gap: 0;
         }
         .video-container {
             position: relative;
@@ -80,43 +81,45 @@
 	<script>
         const videos = [
             { title: "None", url: "" },
-            { title: "2:50am Women's Volleyball - Quarterfinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452576" },
-            { title: "3:20am Women's Handball - Quarterfinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452585" },
+            { title: "2:50am Women's Volleyball - China vs Turkey - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452576" },
+            { title: "3:20am Women's Handball - Denmark vs Netherlands - Quarterfinal ", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452585" },
             { title: "3:20am Canoe Sprint - Women's & Men's Quarterfinals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452580" },
-            { title: "3:50am Table Tennis - Men's & Women's Team Round of 16 - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452593" },
-            { title: "3:50am Diving - Men's 3m Springboard Preliminary", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452596" },
-            { title: "3:50am Jumping Individual Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452589" },
             { title: "3:50am Sport Climbing - Preliminary Round - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452605" },
-            { title: "3:50am Athletics - Track & Field Preliminaries - Day 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452591" },
-            { title: "4:50am Men's Basketball - Quarterfinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452611" },
+            { title: "3:50am Diving - Men's 3m Springboard Preliminary", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452596" },
+            { title: "3:50am Equestrian - Jumping Individual Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452589" },
+            { title: "3:50am Athletics - Track & Field Preliminaries - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452591" },
+            { title: "3:50am Table Tennis - Men's & Women's Team Round of 16 - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452593" },
+            { title: "4:50am Men's Basketball - Germany vs Greece - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452611" },
             { title: "4:50am Wrestling - Preliminary Round - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452621" },
             { title: "5:50am Sailing - Kite, Dinghy, Multihull - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452624" },
             { title: "6:20am Skateboarding - Women's Park Preliminary", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452654" },
-            { title: "6:50am Women's Volleyball - Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452660" },
-            { title: "7:20am Women's Handball - Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452663" },
-            { title: "7:50am Men's Field Hockey - Semifinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452672" },
-            { title: "7:50am Women's Water Polo - Quarterfinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452666" },
-            { title: "8:20am Men's Basketball - Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452676" },
+            { title: "6:50am Women's Volleyball - Brazil vs Dominican Republic - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452660" },
+            { title: "7:20am Women's Handball - France vs Germany - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452663" },
+            { title: "7:50am Men's Field Hockey - Spain vs Netherlands - Semifinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452672" },
+            { title: "7:50am Women's Water Polo - Canada vs Spain - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452666" },
+            { title: "8:20am Men's Basketball - Serbia vs Australia - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452676" },
             { title: "8:50am Table Tennis - Men's & Women's Team Quarterfinals A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452683" },
             { title: "8:50am Diving - Women's 10m Platform Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452687" },
-            { title: "9:20am Women's Water Polo - Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452689" },
-            { title: "10:50am Women's Volleyball - Quarterfinal C", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452695" },
-            { title: "10:50am Beach Volleyball - Mixed Quarterfinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452692" },
+            { title: "9:20am Women's Water Polo - Netherlands vs Italy - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452689" },
+            { title: "10:50am Women's Volleyball - USA vs Poland - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452695" },
+            { title: "10:50am Beach Volleyball - Men's Quarterfinals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452692" },
             { title: "11:20am Skateboarding - Women's Park Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452701" },
             { title: "11:20am Cycling Track - Day 11 Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452699" },
-            { title: "11:50am Men's Basketball - Quarterfinal C", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452702" },
-            { title: "11:50am Women's Soccer - Semifinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452710" },
+            { title: "11:20am Women's Handball - Sweden vs Hungary - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6465950" },
+            { title: "11:50am Men's Basketball - France vs Canada - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452702" },
+            { title: "11:50am Women's Soccer - USA vs Germany - Semifinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452710" },
             { title: "12:05pm Wrestling - Women's & Men's Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452712" },
-            { title: "12:50pm Women's Water Polo - Quarterfinal C", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452718" },
-            { title: "12:50pm Athletics - Track & Field Finals - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452713" },
-            { title: "12:50pm Men's Field Hockey - Semifinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452721" },
+            { title: "12:50pm Men's Field Hockey - India vs Germany - Semifinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452721" },
+            { title: "12:50pm Women's Water Polo - Australia vs Greece - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452718" },
             { title: "1:20pm Artistic Swimming - Team Free Routine", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452726" },
+            { title: "1:40pm Athletics - Women's Hammer Throw Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452713" },
             { title: "1:50pm Table Tennis - Men's & Women's Team Quarterfinals B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452732" },
-            { title: "2:50pm Women's Volleyball - Quarterfinal D", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452749" },
-            { title: "2:50pm Beach Volleyball - Mixed Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452745" },
-            { title: "2:50pm Women's Soccer - Semifinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452740" },
-            { title: "3:20pm Men's Basketball - Quarterfinal D", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452752" },
-            { title: "3:20pm Boxing - Women's & Men's Final - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452766" }
+            { title: "2:50pm Women's Volleyball - Italy vs Serbia - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452749" },
+            { title: "2:50pm Beach Volleyball - Women's Quarterfinals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452745" },
+            { title: "2:50pm Women's Soccer - Spain vs Brazil - Semifinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452740" },
+            { title: "3:20pm Women's Handball - Norway vs Brazil - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452768" },
+            { title: "3:20pm Boxing - Women's & Men's Final - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452766" },
+            { title: "3:20pm Men's Basketball - United States vs Brazil - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452752" }
         ];
 
         function populateSelects() {

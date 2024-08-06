@@ -8,7 +8,7 @@
         html, body {
             height: 100%;
             margin: 0;
-			overflow: hidden;
+            overflow: hidden;
             background-color: black;
             display: flex;
             flex-direction: column;
@@ -31,6 +31,7 @@
             width: 100%;
             margin: 0;
             padding: 0;
+            gap: 0;
         }
         .video-container {
             position: relative;
@@ -42,7 +43,7 @@
             height: 100%;
             border: none;
         }
-        .fullscreen-btn {
+        .fullscreen-btn, .exit-fullscreen-btn {
             position: absolute;
             bottom: 10px;
             right: 10px;
@@ -54,13 +55,20 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
-		.video-container:hover .fullscreen-btn {
+        .video-container:hover .fullscreen-btn,
+        .video-container:hover .exit-fullscreen-btn {
             opacity: 1;
+        }
+        .exit-fullscreen-btn {
+            display: none;
         }
         select {
             color: white;
             background-color: black;
             border: 1px solid white;
+            max-width: 20%;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         body:hover #controls {
             opacity: 1;
@@ -75,69 +83,74 @@
         <select id="select4" onchange="updateIframe('iframe4', this.value)"></select>
     </div>
     <div id="video-grid">
-        <div class="video-container">
+        <div class="video-container" id="container1">
             <iframe id="iframe1" allowfullscreen></iframe>
-            <button class="fullscreen-btn" onclick="makeFullscreen('iframe1')">Fullscreen</button>
+            <button class="fullscreen-btn" onclick="makeFullscreen('container1')">Fullscreen</button>
+            <button class="exit-fullscreen-btn" onclick="exitFullscreen()">Exit Fullscreen</button>
         </div>
-        <div class="video-container">
+        <div class="video-container" id="container2">
             <iframe id="iframe2" allowfullscreen></iframe>
-            <button class="fullscreen-btn" onclick="makeFullscreen('iframe2')">Fullscreen</button>
+            <button class="fullscreen-btn" onclick="makeFullscreen('container2')">Fullscreen</button>
+            <button class="exit-fullscreen-btn" onclick="exitFullscreen()">Exit Fullscreen</button>
         </div>
-        <div class="video-container">
+        <div class="video-container" id="container3">
             <iframe id="iframe3" allowfullscreen></iframe>
-            <button class="fullscreen-btn" onclick="makeFullscreen('iframe3')">Fullscreen</button>
+            <button class="fullscreen-btn" onclick="makeFullscreen('container3')">Fullscreen</button>
+            <button class="exit-fullscreen-btn" onclick="exitFullscreen()">Exit Fullscreen</button>
         </div>
-        <div class="video-container">
+        <div class="video-container" id="container4">
             <iframe id="iframe4" allowfullscreen></iframe>
-            <button class="fullscreen-btn" onclick="makeFullscreen('iframe4')">Fullscreen</button>
+            <button class="fullscreen-btn" onclick="makeFullscreen('container4')">Fullscreen</button>
+            <button class="exit-fullscreen-btn" onclick="exitFullscreen()">Exit Fullscreen</button>
         </div>
     </div>
 
     <script>
         const videos = [
             { title: "None", url: "" },
-            { title: "2:50am Women's Volleyball - Quarterfinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452576" },
-            { title: "3:20am Women's Handball - Quarterfinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452585" },
+            { title: "2:50am Women's Volleyball - China vs Turkey - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452576" },
+            { title: "3:20am Women's Handball - Denmark vs Netherlands - Quarterfinal ", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452585" },
             { title: "3:20am Canoe Sprint - Women's & Men's Quarterfinals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452580" },
-            { title: "3:50am Table Tennis - Men's & Women's Team Round of 16 - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452593" },
-            { title: "3:50am Diving - Men's 3m Springboard Preliminary", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452596" },
-            { title: "3:50am Jumping Individual Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452589" },
             { title: "3:50am Sport Climbing - Preliminary Round - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452605" },
-            { title: "3:50am Athletics - Track & Field Preliminaries - Day 1", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452591" },
-            { title: "4:50am Men's Basketball - Quarterfinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452611" },
+            { title: "3:50am Diving - Men's 3m Springboard Preliminary", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452596" },
+            { title: "3:50am Equestrian - Jumping Individual Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452589" },
+            { title: "3:50am Athletics - Track & Field Preliminaries - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452591" },
+            { title: "3:50am Table Tennis - Men's & Women's Team Round of 16 - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452593" },
+            { title: "4:50am Men's Basketball - Germany vs Greece - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452611" },
             { title: "4:50am Wrestling - Preliminary Round - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452621" },
             { title: "5:50am Sailing - Kite, Dinghy, Multihull - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452624" },
             { title: "6:20am Skateboarding - Women's Park Preliminary", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452654" },
-            { title: "6:50am Women's Volleyball - Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452660" },
-            { title: "7:20am Women's Handball - Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452663" },
-            { title: "7:50am Men's Field Hockey - Semifinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452672" },
-            { title: "7:50am Women's Water Polo - Quarterfinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452666" },
-            { title: "8:20am Men's Basketball - Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452676" },
+            { title: "6:50am Women's Volleyball - Brazil vs Dominican Republic - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452660" },
+            { title: "7:20am Women's Handball - France vs Germany - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452663" },
+            { title: "7:50am Men's Field Hockey - Spain vs Netherlands - Semifinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452672" },
+            { title: "7:50am Women's Water Polo - Canada vs Spain - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452666" },
+            { title: "8:20am Men's Basketball - Serbia vs Australia - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452676" },
             { title: "8:50am Table Tennis - Men's & Women's Team Quarterfinals A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452683" },
             { title: "8:50am Diving - Women's 10m Platform Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452687" },
-            { title: "9:20am Women's Water Polo - Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452689" },
-            { title: "10:50am Women's Volleyball - Quarterfinal C", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452695" },
-            { title: "10:50am Beach Volleyball - Mixed Quarterfinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452692" },
+            { title: "9:20am Women's Water Polo - Netherlands vs Italy - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452689" },
+            { title: "10:50am Women's Volleyball - USA vs Poland - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452695" },
+            { title: "10:50am Beach Volleyball - Men's Quarterfinals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452692" },
             { title: "11:20am Skateboarding - Women's Park Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452701" },
             { title: "11:20am Cycling Track - Day 11 Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452699" },
-            { title: "11:50am Men's Basketball - Quarterfinal C", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452702" },
-            { title: "11:50am Women's Soccer - Semifinal A", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452710" },
+            { title: "11:20am Women's Handball - Sweden vs Hungary - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6465950" },
+            { title: "11:50am Men's Basketball - France vs Canada - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452702" },
+            { title: "11:50am Women's Soccer - USA vs Germany - Semifinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452710" },
             { title: "12:05pm Wrestling - Women's & Men's Finals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452712" },
-            { title: "12:50pm Women's Water Polo - Quarterfinal C", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452718" },
-            { title: "12:50pm Athletics - Track & Field Finals - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452713" },
-            { title: "12:50pm Men's Field Hockey - Semifinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452721" },
+            { title: "12:50pm Men's Field Hockey - India vs Germany - Semifinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452721" },
+            { title: "12:50pm Women's Water Polo - Australia vs Greece - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452718" },
             { title: "1:20pm Artistic Swimming - Team Free Routine", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452726" },
+            { title: "1:40pm Athletics - Women's Hammer Throw Final", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452713" },
             { title: "1:50pm Table Tennis - Men's & Women's Team Quarterfinals B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452732" },
-            { title: "2:50pm Women's Volleyball - Quarterfinal D", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452749" },
-            { title: "2:50pm Beach Volleyball - Mixed Quarterfinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452745" },
-            { title: "2:50pm Women's Soccer - Semifinal B", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452740" },
-            { title: "3:20pm Men's Basketball - Quarterfinal D", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452752" },
-            { title: "3:20pm Boxing - Women's & Men's Final - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452766" }
+            { title: "2:50pm Women's Volleyball - Italy vs Serbia - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452749" },
+            { title: "2:50pm Beach Volleyball - Women's Quarterfinals", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452745" },
+            { title: "2:50pm Women's Soccer - Spain vs Brazil - Semifinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452740" },
+            { title: "3:20pm Women's Handball - Norway vs Brazil - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452768" },
+            { title: "3:20pm Boxing - Women's & Men's Final - Day 11", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452766" },
+            { title: "3:20pm Men's Basketball - United States vs Brazil - Quarterfinal", url: "https://www.cbc.ca/i/phoenix/player/syndicate/?mediaId=9.6452752" }
         ];
 
         function populateSelects() {
             const selects = document.querySelectorAll('select');
-			
             selects.forEach(select => {
                 videos.forEach(video => {
                     const option = document.createElement('option');
@@ -178,18 +191,57 @@
             }
         }
 
-        function makeFullscreen(iframeId) {
-            const iframe = document.getElementById(iframeId);
-            if (iframe.requestFullscreen) {
-                iframe.requestFullscreen();
-            } else if (iframe.mozRequestFullScreen) { /* Firefox */
-                iframe.mozRequestFullScreen();
-            } else if (iframe.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
-                iframe.webkitRequestFullscreen();
-            } else if (iframe.msRequestFullscreen) { /* IE/Edge */
-                iframe.msRequestFullscreen();
+        function makeFullscreen(containerId) {
+            const container = document.getElementById(containerId);
+            if (container.requestFullscreen) {
+                container.requestFullscreen();
+            } else if (container.mozRequestFullScreen) { /* Firefox */
+                container.mozRequestFullScreen();
+            } else if (container.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                container.webkitRequestFullscreen();
+            } else if (container.msRequestFullscreen) { /* IE/Edge */
+                container.msRequestFullscreen();
             }
+
+            container.querySelector('.fullscreen-btn').style.display = 'none';
+            container.querySelector('.exit-fullscreen-btn').style.display = 'block';
         }
+
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) { /* Firefox */
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { /* IE/Edge */
+                document.msExitFullscreen();
+            }
+
+            const containers = document.querySelectorAll('.video-container');
+            containers.forEach(container => {
+                container.querySelector('.fullscreen-btn').style.display = 'block';
+                container.querySelector('.exit-fullscreen-btn').style.display = 'none';
+            });
+        }
+
+        function handleFullscreenChange() {
+            const containers = document.querySelectorAll('.video-container');
+            containers.forEach(container => {
+                if (document.fullscreenElement === container || document.webkitFullscreenElement === container || document.mozFullScreenElement === container || document.msFullscreenElement === container) {
+                    container.querySelector('.fullscreen-btn').style.display = 'none';
+                    container.querySelector('.exit-fullscreen-btn').style.display = 'block';
+                } else {
+                    container.querySelector('.fullscreen-btn').style.display = 'block';
+                    container.querySelector('.exit-fullscreen-btn').style.display = 'none';
+                }
+            });
+        }
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
         document.addEventListener('DOMContentLoaded', () => {
             populateSelects();
