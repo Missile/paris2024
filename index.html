@@ -9,7 +9,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100vh;
             margin: 0;
             background-color: #282c34;
@@ -17,7 +17,7 @@
             font-family: Arial, sans-serif;
         }
         h1 {
-            margin-bottom: 20px;
+            margin-bottom: 0px;
         }
         .duck {
             font-size: 2em;
@@ -26,6 +26,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 5px;
+            overflow-y: auto;
+            width: 100%;
         }
 		.day-links > div {
             display: flex;
@@ -40,6 +48,9 @@
             border-radius: 5px;
             margin: 5px 0;
             transition: background-color 0.3s, color 0.3s;
+            transition: background-color 0.3s, color 0.3s;
+            width: 125px; /* Fixed width for consistency */
+            text-align: center;
         }
         a:hover {
             background-color: #61dafb;
@@ -106,10 +117,14 @@
     </script>
 </head>
 <body>
-    <h1><span class="duck">🦆</span></h1>
-	<div id="dayLink" class="day-links"></div>
-	
-	<h2>Archive</h2>
-    <div id="dayLinks" class="day-links"></div>
+	<header>
+		<h1><span class="duck">🦆</span></h1>
+	</header>
+	<div class="content">
+		<div id="dayLink" class="day-links"></div>
+		
+		<h2>Archive</h2>
+		<div id="dayLinks" class="day-links"></div>
+	</div>
 </body>
 </html>
