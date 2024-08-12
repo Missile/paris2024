@@ -25,7 +25,9 @@
         .day-links {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 600px;
         }
         .content {
             display: flex;
@@ -35,9 +37,16 @@
             overflow-y: auto;
             width: 100%;
         }
-		.day-links > div {
+        .day-links > div {
             display: flex;
+            align-items: center;
             margin-bottom: 10px;
+            justify-content: flex-start;
+            width: 100%;
+        }
+        .date {
+            font-size: 1.25em;
+            margin-right: 5px;
         }
         a {
             text-decoration: none;
@@ -46,8 +55,7 @@
             border: 1px solid #61dafb;
             padding: 10px 20px;
             border-radius: 5px;
-            margin: 5px 0;
-            transition: background-color 0.3s, color 0.3s;
+            margin-left: 10px;
             transition: background-color 0.3s, color 0.3s;
             width: 125px; /* Fixed width for consistency */
             text-align: center;
@@ -60,11 +68,9 @@
     <script>
         // Olympics dates
         const olympicsStartDate = new Date('2024-07-26');
-        const olympicsEndDate = new Date('2024-08-11');
-		
-        const today = new Date();
-		
+        
         // Calculate the number of days since the start date
+        const today = new Date();
         const timeDifference = today - olympicsStartDate;
         let dayNumber = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
@@ -75,56 +81,59 @@
             dayNumber = 1;
         }
 
-        // Generate the links for all days up to the current day
+        // Function to format date for each day
+        function formatDate(date) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString(undefined, options);
+        }
+
+        // Generate the links and dates for all days up to the current day
         window.onload = function() {
-			
-			const linksContainerToday = document.getElementById('dayLink');
-			const todayDiv = document.createElement('div');
-			
-			const linkElementS = document.createElement('a');
-			linkElementS.href = `events/day${dayNumber}-single.html`;
-			linkElementS.textContent = `Day ${dayNumber} Single`;
-			todayDiv.appendChild(linkElementS);
-			
-			const linkElementM = document.createElement('a');
-			linkElementM.href = `events/day${dayNumber}-multi.html`;
-			linkElementM.textContent = `Day ${dayNumber} Multi`;
-			todayDiv.appendChild(linkElementM);
-			
-			linksContainerToday.appendChild(todayDiv);			
-		
+            const linksContainerToday = document.getElementById('dayLink');
             const linksContainer = document.getElementById('dayLinks');
-            for (let i = dayNumber-1; i >= -1; i--) {
-				const dayDiv = document.createElement('div');
-				
+
+            for (let i = dayNumber; i >= -1; i--) {
+                const dateForDay = new Date(olympicsStartDate);
+                dateForDay.setDate(olympicsStartDate.getDate() + i - 1);
+                
+                const formattedDate = formatDate(dateForDay);
+
+                const dayDiv = document.createElement('div');
+                
+                const dateSpan = document.createElement('span');
+                dateSpan.className = 'date';
+                dateSpan.textContent = `${formattedDate} :`;
+
                 const linkElementSingle = document.createElement('a');
                 linkElementSingle.href = `events/day${i}-single.html`;
                 linkElementSingle.textContent = `Day ${i} Single`;
-                dayDiv.appendChild(linkElementSingle);
-				
-				const linkElementMulti = document.createElement('a');
+                
+                const linkElementMulti = document.createElement('a');
                 linkElementMulti.href = `events/day${i}-multi.html`;
                 linkElementMulti.textContent = `Day ${i} Multi`;
+
+                dayDiv.appendChild(dateSpan);
+                dayDiv.appendChild(linkElementSingle);
                 dayDiv.appendChild(linkElementMulti);
-				
-				linksContainer.appendChild(dayDiv);
-            }
-			
-			if (linksContainer.children.length === 0) {
-                linksContainer.textContent = 'No available links';
+
+                if (i === dayNumber && dayNumber < 16) {
+                    linksContainerToday.appendChild(dayDiv);
+                } else {
+                    linksContainer.appendChild(dayDiv);
+                }
             }
         };
     </script>
 </head>
 <body>
-	<header>
-		<h1><span class="duck">🦆</span></h1>
-	</header>
-	<div class="content">
-		<div id="dayLink" class="day-links"></div>
-		
-		<h2>Archive</h2>
-		<div id="dayLinks" class="day-links"></div>
-	</div>
+    <header>
+        <h1><span class="duck">🦆</span></h1>
+    </header>
+    <div class="content">
+        <div id="dayLink" class="day-links"></div>
+        
+        <h2>Archive</h2>
+        <div id="dayLinks" class="day-links"></div>
+    </div>
 </body>
 </html>
