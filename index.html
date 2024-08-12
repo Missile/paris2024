@@ -92,9 +92,9 @@
             const linksContainerToday = document.getElementById('dayLink');
             const linksContainer = document.getElementById('dayLinks');
 
-            for (let i = dayNumber; i >= -1; i--) {
+            for (let i = dayNumber + 1; i >= -1; i--) {
                 const dateForDay = new Date(olympicsStartDate);
-                dateForDay.setDate(olympicsStartDate.getDate() + i - 1);
+                dateForDay.setDate(olympicsStartDate.getDate() + i);
                 
                 const formattedDate = formatDate(dateForDay);
 
